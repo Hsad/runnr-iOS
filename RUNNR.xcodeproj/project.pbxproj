@@ -15,6 +15,7 @@
 		641FC9611BD583D70067FE26 /* RUNNRTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 641FC9601BD583D70067FE26 /* RUNNRTests.swift */; };
 		641FC96C1BD583D70067FE26 /* RUNNRUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 641FC96B1BD583D70067FE26 /* RUNNRUITests.swift */; };
 		642987751BDEC7BF00F7E48E /* Run.swift in Sources */ = {isa = PBXBuildFile; fileRef = 642987741BDEC7BF00F7E48E /* Run.swift */; settings = {ASSET_TAGS = (); }; };
+		642987771BDED15500F7E48E /* UserAnalyticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 642987761BDED15500F7E48E /* UserAnalyticsViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		649F5C7F1BD58692000AA26B /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 649F5C7E1BD58692000AA26B /* MapKit.framework */; };
 		649F5C811BD5885B000AA26B /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 649F5C801BD5885B000AA26B /* CoreLocation.framework */; };
 /* End PBXBuildFile section */
@@ -51,6 +52,7 @@
 		641FC96B1BD583D70067FE26 /* RUNNRUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RUNNRUITests.swift; sourceTree = "<group>"; };
 		641FC96D1BD583D70067FE26 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		642987741BDEC7BF00F7E48E /* Run.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Run.swift; sourceTree = "<group>"; };
+		642987761BDED15500F7E48E /* UserAnalyticsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserAnalyticsViewController.swift; sourceTree = "<group>"; };
 		649F5C7E1BD58692000AA26B /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		649F5C801BD5885B000AA26B /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -111,6 +113,7 @@
 				641FC94B1BD583D70067FE26 /* AppDelegate.swift */,
 				641FC94D1BD583D70067FE26 /* MainViewController.swift */,
 				641FC94F1BD583D70067FE26 /* Main.storyboard */,
+				642987761BDED15500F7E48E /* UserAnalyticsViewController.swift */,
 				641FC9521BD583D70067FE26 /* Assets.xcassets */,
 				641FC9541BD583D70067FE26 /* LaunchScreen.storyboard */,
 				641FC9571BD583D70067FE26 /* Info.plist */,
@@ -268,6 +271,7 @@
 			files = (
 				641FC94E1BD583D70067FE26 /* MainViewController.swift in Sources */,
 				642987751BDEC7BF00F7E48E /* Run.swift in Sources */,
+				642987771BDED15500F7E48E /* UserAnalyticsViewController.swift in Sources */,
 				641FC94C1BD583D70067FE26 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

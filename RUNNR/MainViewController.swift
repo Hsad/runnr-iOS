@@ -96,7 +96,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     func upperRightButtonAction(sender: UIButton!){
         print("upper right button Action")
-        
+        self.performSegueWithIdentifier("toUserAnalytics", sender: self)
     }
     func lowerLeftButtonAction(sender: UIButton!){
         print("lower left button Action")
