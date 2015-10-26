@@ -14,6 +14,7 @@
 		641FC9561BD583D70067FE26 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 641FC9541BD583D70067FE26 /* LaunchScreen.storyboard */; };
 		641FC9611BD583D70067FE26 /* RUNNRTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 641FC9601BD583D70067FE26 /* RUNNRTests.swift */; };
 		641FC96C1BD583D70067FE26 /* RUNNRUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 641FC96B1BD583D70067FE26 /* RUNNRUITests.swift */; };
+		642987751BDEC7BF00F7E48E /* Run.swift in Sources */ = {isa = PBXBuildFile; fileRef = 642987741BDEC7BF00F7E48E /* Run.swift */; settings = {ASSET_TAGS = (); }; };
 		649F5C7F1BD58692000AA26B /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 649F5C7E1BD58692000AA26B /* MapKit.framework */; };
 		649F5C811BD5885B000AA26B /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 649F5C801BD5885B000AA26B /* CoreLocation.framework */; };
 /* End PBXBuildFile section */
@@ -49,6 +50,7 @@
 		641FC9671BD583D70067FE26 /* RUNNRUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RUNNRUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		641FC96B1BD583D70067FE26 /* RUNNRUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RUNNRUITests.swift; sourceTree = "<group>"; };
 		641FC96D1BD583D70067FE26 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		642987741BDEC7BF00F7E48E /* Run.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Run.swift; sourceTree = "<group>"; };
 		649F5C7E1BD58692000AA26B /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		649F5C801BD5885B000AA26B /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -83,6 +85,7 @@
 		641FC93F1BD583D70067FE26 = {
 			isa = PBXGroup;
 			children = (
+				642987741BDEC7BF00F7E48E /* Run.swift */,
 				649F5C801BD5885B000AA26B /* CoreLocation.framework */,
 				649F5C7E1BD58692000AA26B /* MapKit.framework */,
 				641FC94A1BD583D70067FE26 /* RUNNR */,
@@ -264,6 +267,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				641FC94E1BD583D70067FE26 /* ViewController.swift in Sources */,
+				642987751BDEC7BF00F7E48E /* Run.swift in Sources */,
 				641FC94C1BD583D70067FE26 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
