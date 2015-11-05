@@ -32,6 +32,14 @@ class Run : NSObject {
             userInfo: nil,
             repeats: true)
     }
+    
+    convenience init(forExistingRun distance: Double, seconds: Double, pointsTraveled: [CLLocation]){
+        self.init()
+        self.kill()
+        self.distance = distance
+        self.seconds = seconds
+        self.pointsTraveled = pointsTraveled
+    }
     func incrementDistance(value: CLLocationDistance){
         //Increment the Distance by some CLLocationDistance. 
         //This is intended to be used with a nested call to determine 
@@ -59,13 +67,9 @@ class Run : NSObject {
         let paceQuantity = HKQuantity(unit: paceUnit, doubleValue: seconds / distance)
         currentPace = paceQuantity
     }
-    func getCoordinatesOfRoute()->[CLLocationCoordinate2D]{
+    func getCoordinatesOfRoute()->[CLLocation]{
         //Return the coordinates of this Run.
-        var coords = [CLLocationCoordinate2D]()
-        for location in pointsTraveled{
-            coords.append(location.coordinate)
-        }
-        return coords
+        return self.pointsTraveled
     }
     
 }

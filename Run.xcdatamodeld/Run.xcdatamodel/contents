@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9057" systemVersion="14F1021" minimumToolsVersion="Xcode 7.0">
+    <entity name="Coordinate" representedClassName=".CoordinateEntity" syncable="YES">
+        <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="order" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <relationship name="isOwnedBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="RunEntity" inverseName="owns" inverseEntity="RunEntity" syncable="YES"/>
+    </entity>
+    <entity name="RunEntity" representedClassName=".RunEntity" syncable="YES">
+        <attribute name="createdAt" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="distance" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="time" optional="YES" attributeType="Double" defaultValueString="0" syncable="YES"/>
+        <attribute name="user" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="owns" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Coordinate" inverseName="isOwnedBy" inverseEntity="Coordinate" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Coordinate" positionX="-308" positionY="-90" width="128" height="103"/>
+        <element name="RunEntity" positionX="-533" positionY="-214" width="128" height="118"/>
+    </elements>
+</model>

@@ -9,6 +9,7 @@
 import UIKit
 import MapKit
 import HealthKit
+import CoreData
 
 
 
@@ -20,58 +21,78 @@ extension ViewController: MKMapViewDelegate {
         renderer.lineWidth   = 3
         return renderer
     }
+    
 }
 class ViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var MapView: MKMapView!
-
-
+    
     let regionRadius: CLLocationDistance = 80
     let locManager = CLLocationManager()
     var isRunning = false
-    var currentLocation:CLLocation!
-    var displayLabel : UILabel!
-    var startButton : UIButton!
-    var cornerButton : UIButton!
-    var rightCornerButton: UIButton!
-    var bottomLeftCornerButton: UIButton!
+    var userDefaults:NSUserDefaults = NSUserDefaults.standardUserDefaults()
+    var currentLocation         :CLLocation!
+    
+    var displayLabel            : UILabel!
+    var startButton             : UIButton!
+    var cornerButton            : UIButton!
+    var rightCornerButton       : UIButton!
+    var bottomLeftCornerButton  : UIButton!
     var bottomRightCornerButton : UIButton!
     var cornerImage = UIImage(named: "RUNNR_Corner.png")
-    var currentRun : Run!
     
+    var userRuns = [NSManagedObject]()
+    var currentRun : Run!
+    var currentUser: User!
+    
+    var startButtonFrame:CGRect!
+    var pentagonButtonFrame:CGRect!
     func createStartButton(view: UIView, frame: CGRect)->UIButton{
         
         let startButton = UIButton(frame: frame)
         startButton.setTitle("Start Run", forState: UIControlState.Normal)
         startButton.setTitleColor(UIColor.blackColor(), forState: UIControlState.Normal)
-        startButton.backgroundColor = UIColor.greenColor()
+        if isRunning == false{
+            startButton.setBackgroundImage(UIImage(named: "pentagon.png"), forState: UIControlState.Normal)
+        }
+        else{
+            startButton.backgroundColor = UIColor.redColor()
+            startButton.setTitle("Stop Run", forState: UIControlState.Normal)
+        }
         startButton.addTarget(self, action: "startButtonAction:", forControlEvents: UIControlEvents.TouchUpInside)
         view.addSubview(startButton)
         
         return startButton
     }
     func createCornerButton(view: UIView, frame: CGRect, cornerNumber: Int)->UIButton{
-        
         let cornerButton = UIButton(frame: frame)
         cornerButton.setBackgroundImage(cornerImage, forState: UIControlState.Normal)
-
         switch cornerNumber{
         case 0 :
             //upper left
+            cornerButton.addTarget(self, action: "upperLeftButtonAction:", forControlEvents: UIControlEvents.TouchUpInside)
+            cornerButton.setImage(UIImage(named: "LeaderBoard.png"), forState: UIControlState.Normal)
             break
         case 1 :
             cornerButton.addTarget(self, action: "upperRightButtonAction:", forControlEvents: UIControlEvents.TouchUpInside)
             cornerButton.transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
+            cornerButton.setImage(UIImage(named: "StatsStopWatchWithBackGround.png"), forState: UIControlState.Normal)
+            cornerButton.imageView!.transform = CGAffineTransformMakeRotation(CGFloat(-(M_PI_2)))
+            
             view.addSubview(cornerButton)
             return cornerButton
         case 2 :
             //lower left
             cornerButton.addTarget(self, action: "lowerLeftButtonAction:", forControlEvents: UIControlEvents.TouchUpInside)
+            cornerButton.setImage(UIImage(named: "SettingsHAL.png"), forState: UIControlState.Normal)
+            cornerButton.imageView!.transform = CGAffineTransformMakeRotation(CGFloat(-(M_PI_2)))
             cornerButton.transform = CGAffineTransformMakeRotation(CGFloat(-M_PI_2))
             view.addSubview(cornerButton)
             return cornerButton
         case 3 :
             //lower right
             cornerButton.addTarget(self, action: "lowerRightButtonAction:", forControlEvents: UIControlEvents.TouchUpInside)
+            cornerButton.setImage(UIImage(named: "OtherTeamThing.png"), forState: UIControlState.Normal)
+            cornerButton.imageView!.transform = CGAffineTransformMakeRotation(CGFloat(-(M_PI_2)))
             cornerButton.transform = CGAffineTransformMakeRotation(2 * CGFloat(-M_PI_2))
             view.addSubview(cornerButton)
             return cornerButton
@@ -90,9 +111,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         view.addSubview(label)
         return label
     }
-   
     func upperLeftButtonAction(sender: UIButton!){
         print("upper left button Action")
+        self.performSegueWithIdentifier("toLeaderboards", sender: self)
     }
     func upperRightButtonAction(sender: UIButton!){
         print("upper right button Action")
@@ -100,31 +121,129 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     func lowerLeftButtonAction(sender: UIButton!){
         print("lower left button Action")
+        self.performSegueWithIdentifier("toSettings", sender: self)
         
     }
     func lowerRightButtonAction(sender: UIButton!){
         print("lower right button Action")
-        
+        self.performSegueWithIdentifier("toTeamView", sender: self)
     }
     func startButtonAction(sender:UIButton!){
         if isRunning == false{
             isRunning  = true
             currentRun = Run()
-            
+            startButton.removeFromSuperview()
+            startButton = createStartButton(self.view, frame: startButtonFrame)
             startButton.setTitle("Stop Run", forState: UIControlState.Normal)
-            startButton.backgroundColor = UIColor.redColor()
         }
         else if isRunning == true{
             isRunning = false
-            
             startButton.setTitle("Start Run", forState: UIControlState.Normal)
-            startButton.backgroundColor = UIColor.greenColor()
+            startButton.removeFromSuperview()
+            startButton = createStartButton(self.view, frame: pentagonButtonFrame)
             currentRun.kill()
+            //create the url with NSURL
+            saveRun("test", userRun: currentRun)
+            var coordinate_array = [Double]()
+            for coordinates in currentRun.pointsTraveled{
+                coordinate_array.append(coordinates.coordinate.latitude)
+                coordinate_array.append(coordinates.coordinate.longitude)
+            }
             
+            
+            let url = NSURL(string: "http://localhost:3000/finishRun") //change the url
+            print(currentRun.seconds)
+            var parameters = ["userName": userDefaults.stringForKey("userName")!, "runtime" : String(currentRun.seconds) ,"coordinates": String(coordinate_array), "distance": String(currentRun.distance)] as Dictionary<String, String>
+            
+            //create the session object
+            var session = NSURLSession.sharedSession()
+            
+            //now create the NSMutableRequest object using the url object
+            let request = NSMutableURLRequest(URL: url!)
+            request.HTTPMethod = "POST" //set http method as POST
+            
+            do{
+                request.HTTPBody =  try NSJSONSerialization.dataWithJSONObject(parameters, options: []) // pass dictionary to nsdata object and set it as request body
+                
+                request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+                request.addValue("application/json", forHTTPHeaderField: "Accept")
+                
+                //create dataTask using the session object to send data to the server
+                var task = session.dataTaskWithRequest(request, completionHandler: {data, response, error -> Void in
+                    print("Response: \(response)")
+                    var strData = NSString(data: data!, encoding: NSUTF8StringEncoding)
+                    print("Body: \(strData)")
+                    do{
+                        var json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableLeaves) as? NSDictionary
+                        
+                        // Did the JSONObjectWithData constructor return an error? If so, log the error to the console
+                        
+                        // The JSONObjectWithData constructor didn't return an error. But, we should still
+                        // check and make sure that json has a value using optional binding.
+                        if let parseJSON = json {
+                            // Okay, the parsedJSON is here, let's get the value for 'success' out of it
+                            var success = parseJSON["success"] as? Int
+                            print("Success: \(success)")
+                        }
+                        else {
+                            // Woa, okay the json object was nil, something went worng. Maybe the server isn't running?
+                            let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
+                            print("Error could not parse JSON: \(jsonStr)")
+                        }
+                    }catch let err as NSError{
+                        print(err.localizedDescription)
+                        let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
+                        print("Error could not parse JSON: '\(jsonStr)'")
+                    }
+                })
+                task.resume()
+            }catch let err as NSError{
+                
+            }
         }
-        
     }
     
+    func saveRun(userName: String, userRun: Run){
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        let managedContext = appDelegate.managedObjectContext
+        let coordinatesOfRoute = userRun.getCoordinatesOfRoute()
+        
+        
+        let entity =  NSEntityDescription.entityForName("RunEntity",
+            inManagedObjectContext:managedContext)
+        
+        let newRunEntry = RunEntity(entity: entity!, insertIntoManagedObjectContext: managedContext)
+        
+        var order = 0
+        for coordinates in coordinatesOfRoute{
+            let latitude = coordinates.coordinate.latitude
+            let longitude = coordinates.coordinate.longitude
+            let coordinateEntity = NSEntityDescription.entityForName("Coordinate", inManagedObjectContext: managedContext)
+            let newCoordinateEntry = CoordinateEntity(entity: coordinateEntity!, insertIntoManagedObjectContext: managedContext)
+            newCoordinateEntry.latitude = Double(coordinates.coordinate.latitude)
+            newCoordinateEntry.longitude = Double(coordinates.coordinate.longitude)
+            newCoordinateEntry.order = order
+            newCoordinateEntry.isOwnedBy = newRunEntry
+            order++
+        }
+        
+        
+        var todaysDate:NSDate = NSDate()
+        var dateFormatter:NSDateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "MM-dd-yyyy HH:mm"
+        var DateInFormat:String = dateFormatter.stringFromDate(todaysDate)
+        
+        newRunEntry.setValue(userName, forKey: "user")
+        newRunEntry.setValue(userRun.distance, forKeyPath: "distance")
+        newRunEntry.setValue(userRun.seconds, forKeyPath: "time")
+        newRunEntry.setValue(DateInFormat, forKeyPath: "createdAt")
+        do {
+            try managedContext.save()
+        } catch let error as NSError  {
+            print("Could not save \(error), \(error.userInfo)")
+        }
+    }
     func centerMapOnLocation(location: CLLocation) {
         //Center the MKView on a given Location
         let coordinateRegion = MKCoordinateRegionMakeWithDistance(location.coordinate,
@@ -137,14 +256,23 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         // Do any additional setup after loading the view, typically from a nib.
         MapView.delegate = self
         //Create the frames for all subviews of this controller.
+        //Call all instatiation methods for those subviews.
+
+        currentUser = User()
+        currentUser.userName = self.userDefaults.stringForKey("userName")
         let displayLabelFrame = CGRect(x: self.view.frame.size.width/2 - 100,
             y: self.view.frame.size.height/11,
             width: 200,
             height: 44)
-        let startButtonFrame = CGRect(x: self.view.frame.size.width/2 - 50,
+        startButtonFrame = CGRect(x: self.view.frame.size.width/2 - 50,
             y: 7 * self.view.frame.size.height/8,
             width: 100,
             height: 44)
+        
+        pentagonButtonFrame = CGRect(x: self.view.frame.size.width/2 - 140,
+            y: self.view.frame.size.height/2 - 150,
+            width: 300,
+            height:300)
         let cornerFrame = CGRect(x: 0,
             y: 0,
             width: 100,
@@ -161,9 +289,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             y: self.view.frame.size.height - 100,
             width: 100,
             height: 100)
-        //Call all instatiation methods for those subviews.
         displayLabel            = createDisplayLabel(self.view, frame: displayLabelFrame)
-        startButton             = createStartButton(self.view, frame: startButtonFrame)
+        startButton             = createStartButton(self.view, frame: pentagonButtonFrame)
         cornerButton            = createCornerButton(self.view, frame: cornerFrame, cornerNumber: 0)
         rightCornerButton       = createCornerButton(self.view, frame: rightCornerFrame, cornerNumber: 1)
         bottomLeftCornerButton  = createCornerButton(self.view, frame: bottomLeftCornerFrame, cornerNumber: 2)
@@ -184,18 +311,48 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         else{ //Ask for permission again if the user said no before.
             locManager.requestWhenInUseAuthorization()
         }
-        
+        print(userRuns.count)
     }
     
     override func viewWillDisappear(animated: Bool) {
         //pass
     }
     
-    func drawRunOnMap(run: Run, mapView: MKMapView){
-        var coords = run.getCoordinatesOfRoute()
+    override func viewWillAppear(animated: Bool) {
+        let appDelegate =
+        UIApplication.sharedApplication().delegate as! AppDelegate
+        
+        let managedContext = appDelegate.managedObjectContext
+        
+        //2
+        let fetchRequest = NSFetchRequest(entityName: "RunEntity")
+        
+        //3
+        do {
+            let results =
+            try managedContext.executeFetchRequest(fetchRequest)
+            userRuns = results as! [NSManagedObject]
+        } catch let error as NSError {
+            print("Could not fetch \(error), \(error.userInfo)")
+        }
+    }
+    func drawRunOnMap(currentRun: Run, mapView: MKMapView){
+        
+        
+        
+        var coords = [CLLocationCoordinate2D]()
+        
+        for location in currentRun.pointsTraveled{
+            let lastLocation = currentRun.pointsTraveled.last!
+            let thisLocation = location
+            coords.append(lastLocation.coordinate)
+            coords.append(thisLocation.coordinate)
+            MapView.addOverlay(MKPolyline(coordinates: &coords, count: coords.count))
+        }
+        
+        updateTextLabel(displayLabel)
         let routeLine = MKPolyline(coordinates: &coords, count: coords.count)
-        run.giveOverlay(routeLine)
-        mapView.addOverlay(routeLine)
+        currentRun.giveOverlay(routeLine)
         
     }
     
@@ -208,17 +365,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         
         let displayDistance = Double(round(1*currentRun.distance)/1)
         let displayTime = Double(round(1*currentRun.seconds/1))
-
+        
         label.text  = "Distance Ran: \(displayDistance) m \nCurrent Time: \(displayTime) s"
         label.textAlignment = .Center
     }
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        
-        
         self.currentLocation = locations.last
-        
-        
         if isRunning == true{
             centerMapOnLocation(self.currentLocation)
             if currentRun.pointsTraveled.count >= 1{
@@ -234,7 +387,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                 currentRun.incrementDistance(lastLocation.distanceFromLocation(thisLocation))
                 updateTextLabel(displayLabel)
             }
-            currentRun.addLocation(currentLocation)
+            else{
+                currentRun.addLocation(currentLocation)
+            }
         }
         else{
             //User is moving and we don't care
