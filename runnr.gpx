@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<gpx creator="GPS Visualizer http://www.gpsvisualizer.com/" version="1.1" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<wpt lat="42.7317845" lon="-73.6769296">
+  <name>1995 15th St, Troy, NY 12180, USA</name>
+  <sym>images/icon-1.png</sym>
+</wpt>
+<wpt lat="42.7317967" lon="-73.6769261">
+  <name>1992-1994 15th St, Troy, NY 12180, USA</name>
+  <sym>images/icon-2.png</sym>
+</wpt>
+<trk>
+  <name>Directions from 1995 15th St, Troy, NY 12180, USA to 1992-1994 15th St, Troy, NY 12180, USA</name>
+  <trkseg>
+    <trkpt lat="42.73178" lon="-73.67693"></trkpt>
+    <trkpt lat="42.73164" lon="-73.67697"></trkpt>
+    <trkpt lat="42.73109" lon="-73.67713"></trkpt>
+    <trkpt lat="42.73078" lon="-73.67722"></trkpt>
+    <trkpt lat="42.73081" lon="-73.67738"></trkpt>
+    <trkpt lat="42.73085" lon="-73.67764"></trkpt>
+    <trkpt lat="42.73098" lon="-73.67851"></trkpt>
+    <trkpt lat="42.73105" lon="-73.67902"></trkpt>
+    <trkpt lat="42.73109" lon="-73.67926"></trkpt>
+    <trkpt lat="42.73114" lon="-73.67958"></trkpt>
+    <trkpt lat="42.73116" lon="-73.67975"></trkpt>
+    <trkpt lat="42.7312" lon="-73.67997"></trkpt>
+    <trkpt lat="42.73122" lon="-73.6801"></trkpt>
+    <trkpt lat="42.73124" lon="-73.6802"></trkpt>
+    <trkpt lat="42.73125" lon="-73.68025"></trkpt>
+    <trkpt lat="42.73126" lon="-73.6803"></trkpt>
+    <trkpt lat="42.73136" lon="-73.6803"></trkpt>
+    <trkpt lat="42.73138" lon="-73.6803"></trkpt>
+    <trkpt lat="42.7314" lon="-73.68031"></trkpt>
+    <trkpt lat="42.73142" lon="-73.68032"></trkpt>
+    <trkpt lat="42.73144" lon="-73.68034"></trkpt>
+    <trkpt lat="42.73146" lon="-73.68036"></trkpt>
+    <trkpt lat="42.73148" lon="-73.68038"></trkpt>
+    <trkpt lat="42.7315" lon="-73.68044"></trkpt>
+    <trkpt lat="42.73152" lon="-73.68049"></trkpt>
+    <trkpt lat="42.73155" lon="-73.68056"></trkpt>
+    <trkpt lat="42.73157" lon="-73.68063"></trkpt>
+    <trkpt lat="42.73159" lon="-73.68068"></trkpt>
+    <trkpt lat="42.7316" lon="-73.68072"></trkpt>
+    <trkpt lat="42.73162" lon="-73.68075"></trkpt>
+    <trkpt lat="42.73164" lon="-73.68078"></trkpt>
+    <trkpt lat="42.73167" lon="-73.68084"></trkpt>
+    <trkpt lat="42.73171" lon="-73.68089"></trkpt>
+    <trkpt lat="42.73175" lon="-73.68093"></trkpt>
+    <trkpt lat="42.73179" lon="-73.68098"></trkpt>
+    <trkpt lat="42.73185" lon="-73.68102"></trkpt>
+    <trkpt lat="42.73185" lon="-73.68103"></trkpt>
+    <trkpt lat="42.73189" lon="-73.68106"></trkpt>
+    <trkpt lat="42.73193" lon="-73.68109"></trkpt>
+    <trkpt lat="42.73198" lon="-73.68111"></trkpt>
+    <trkpt lat="42.73203" lon="-73.68112"></trkpt>
+    <trkpt lat="42.73209" lon="-73.68113"></trkpt>
+    <trkpt lat="42.73217" lon="-73.68115"></trkpt>
+    <trkpt lat="42.73225" lon="-73.68117"></trkpt>
+    <trkpt lat="42.7323" lon="-73.68117"></trkpt>
+    <trkpt lat="42.73234" lon="-73.68117"></trkpt>
+    <trkpt lat="42.73238" lon="-73.68117"></trkpt>
+    <trkpt lat="42.73241" lon="-73.68115"></trkpt>
+    <trkpt lat="42.73244" lon="-73.68113"></trkpt>
+    <trkpt lat="42.73246" lon="-73.68111"></trkpt>
+    <trkpt lat="42.73248" lon="-73.68109"></trkpt>
+    <trkpt lat="42.7325" lon="-73.68105"></trkpt>
+    <trkpt lat="42.73251" lon="-73.68102"></trkpt>
+    <trkpt lat="42.73252" lon="-73.68098"></trkpt>
+    <trkpt lat="42.73253" lon="-73.68093"></trkpt>
+    <trkpt lat="42.73253" lon="-73.68087"></trkpt>
+    <trkpt lat="42.73254" lon="-73.68081"></trkpt>
+    <trkpt lat="42.73254" lon="-73.68078"></trkpt>
+    <trkpt lat="42.73255" lon="-73.68075"></trkpt>
+    <trkpt lat="42.73256" lon="-73.68074"></trkpt>
+    <trkpt lat="42.73257" lon="-73.68072"></trkpt>
+    <trkpt lat="42.73258" lon="-73.6807"></trkpt>
+    <trkpt lat="42.7326" lon="-73.68068"></trkpt>
+    <trkpt lat="42.73263" lon="-73.68066"></trkpt>
+    <trkpt lat="42.73267" lon="-73.68064"></trkpt>
+    <trkpt lat="42.73275" lon="-73.68061"></trkpt>
+    <trkpt lat="42.73286" lon="-73.68058"></trkpt>
+    <trkpt lat="42.73318" lon="-73.68048"></trkpt>
+    <trkpt lat="42.73364" lon="-73.68034"></trkpt>
+    <trkpt lat="42.73349" lon="-73.67957"></trkpt>
+    <trkpt lat="42.73346" lon="-73.6794"></trkpt>
+    <trkpt lat="42.73335" lon="-73.67879"></trkpt>
+    <trkpt lat="42.7333" lon="-73.67846"></trkpt>
+    <trkpt lat="42.73317" lon="-73.67752"></trkpt>
+    <trkpt lat="42.73306" lon="-73.67668"></trkpt>
+    <trkpt lat="42.73307" lon="-73.67655"></trkpt>
+    <trkpt lat="42.73301" lon="-73.67658"></trkpt>
+    <trkpt lat="42.73288" lon="-73.67662"></trkpt>
+    <trkpt lat="42.73271" lon="-73.67667"></trkpt>
+    <trkpt lat="42.7318" lon="-73.67693"></trkpt>
+  </trkseg>
+</trk>
+</gpx>

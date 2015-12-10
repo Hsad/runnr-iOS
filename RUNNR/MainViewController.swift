@@ -130,6 +130,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     func startButtonAction(sender:UIButton!){
         if isRunning == false{
+            //If the user isn't running
             isRunning  = true
             currentRun = Run()
             startButton.removeFromSuperview()
@@ -137,6 +138,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             startButton.setTitle("Stop Run", forState: UIControlState.Normal)
         }
         else if isRunning == true{
+            //If the user is running
             isRunning = false
             startButton.setTitle("Start Run", forState: UIControlState.Normal)
             startButton.removeFromSuperview()
@@ -144,6 +146,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             currentRun.kill()
             //create the url with NSURL
             saveRun("test", userRun: currentRun)
+            //Add currentRun to currentUser's set of runs.
+            currentUser.appendRun(currentRun)
             var coordinate_array = [Double]()
             for coordinates in currentRun.pointsTraveled{
                 coordinate_array.append(coordinates.coordinate.latitude)
@@ -151,12 +155,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             }
             
             
+            //Make request to server to add Run data
             let url = NSURL(string: "http://localhost:3000/finishRun") //change the url
             print(currentRun.seconds)
-            var parameters = ["userName": userDefaults.stringForKey("userName")!, "runtime" : String(currentRun.seconds) ,"coordinates": String(coordinate_array), "distance": String(currentRun.distance)] as Dictionary<String, String>
+            let parameters = ["userName": userDefaults.stringForKey("userName")!, "runtime" : String(currentRun.seconds) ,"coordinates": String(coordinate_array), "distance": String(currentRun.distance)] as Dictionary<String, String>
             
             //create the session object
-            var session = NSURLSession.sharedSession()
+            let session = NSURLSession.sharedSession()
             
             //now create the NSMutableRequest object using the url object
             let request = NSMutableURLRequest(URL: url!)
@@ -169,12 +174,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                 request.addValue("application/json", forHTTPHeaderField: "Accept")
                 
                 //create dataTask using the session object to send data to the server
-                var task = session.dataTaskWithRequest(request, completionHandler: {data, response, error -> Void in
+                let task = session.dataTaskWithRequest(request, completionHandler: {data, response, error -> Void in
                     print("Response: \(response)")
-                    var strData = NSString(data: data!, encoding: NSUTF8StringEncoding)
+                    let strData = NSString(data: data!, encoding: NSUTF8StringEncoding)
                     print("Body: \(strData)")
                     do{
-                        var json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableLeaves) as? NSDictionary
+                        let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableLeaves) as? NSDictionary
                         
                         // Did the JSONObjectWithData constructor return an error? If so, log the error to the console
                         
@@ -182,7 +187,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                         // check and make sure that json has a value using optional binding.
                         if let parseJSON = json {
                             // Okay, the parsedJSON is here, let's get the value for 'success' out of it
-                            var success = parseJSON["success"] as? Int
+                            let success = parseJSON["success"] as? Int
                             print("Success: \(success)")
                         }
                         else {
@@ -198,12 +203,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                 })
                 task.resume()
             }catch let err as NSError{
-                
+                print(err)
             }
         }
     }
     
     func saveRun(userName: String, userRun: Run){
+        
+        //Save run in Coredata for user
         let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         
         let managedContext = appDelegate.managedObjectContext
@@ -217,8 +224,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         
         var order = 0
         for coordinates in coordinatesOfRoute{
-            let latitude = coordinates.coordinate.latitude
-            let longitude = coordinates.coordinate.longitude
             let coordinateEntity = NSEntityDescription.entityForName("Coordinate", inManagedObjectContext: managedContext)
             let newCoordinateEntry = CoordinateEntity(entity: coordinateEntity!, insertIntoManagedObjectContext: managedContext)
             newCoordinateEntry.latitude = Double(coordinates.coordinate.latitude)
@@ -228,12 +233,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             order++
         }
         
+        //Create a timestampe of today, right now
         
-        var todaysDate:NSDate = NSDate()
-        var dateFormatter:NSDateFormatter = NSDateFormatter()
+        let todaysDate:NSDate = NSDate()
+        let dateFormatter:NSDateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "MM-dd-yyyy HH:mm"
-        var DateInFormat:String = dateFormatter.stringFromDate(todaysDate)
+        let DateInFormat:String = dateFormatter.stringFromDate(todaysDate)
         
+        //Set values for CoreData Entity
         newRunEntry.setValue(userName, forKey: "user")
         newRunEntry.setValue(userRun.distance, forKeyPath: "distance")
         newRunEntry.setValue(userRun.seconds, forKeyPath: "time")
@@ -257,9 +264,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         MapView.delegate = self
         //Create the frames for all subviews of this controller.
         //Call all instatiation methods for those subviews.
-
+        //Create the current User
         currentUser = User()
         currentUser.userName = self.userDefaults.stringForKey("userName")
+        
+        //Create frames for UI elements
         let displayLabelFrame = CGRect(x: self.view.frame.size.width/2 - 100,
             y: self.view.frame.size.height/11,
             width: 200,
@@ -268,7 +277,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             y: 7 * self.view.frame.size.height/8,
             width: 100,
             height: 44)
-        
         pentagonButtonFrame = CGRect(x: self.view.frame.size.width/2 - 140,
             y: self.view.frame.size.height/2 - 150,
             width: 300,
@@ -289,12 +297,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             y: self.view.frame.size.height - 100,
             width: 100,
             height: 100)
+        
+        //Call creation functions for UI elements
         displayLabel            = createDisplayLabel(self.view, frame: displayLabelFrame)
         startButton             = createStartButton(self.view, frame: pentagonButtonFrame)
         cornerButton            = createCornerButton(self.view, frame: cornerFrame, cornerNumber: 0)
         rightCornerButton       = createCornerButton(self.view, frame: rightCornerFrame, cornerNumber: 1)
         bottomLeftCornerButton  = createCornerButton(self.view, frame: bottomLeftCornerFrame, cornerNumber: 2)
         bottomRightCornerButton = createCornerButton(self.view, frame: bottomRightCornerFrame, cornerNumber: 3)
+        
         //Request location authorization from user
         locManager.requestWhenInUseAuthorization()
         //Start tracking user location if we have permission
@@ -306,7 +317,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             
             locManager.startUpdatingLocation()
             self.currentLocation       = locManager.location
-            centerMapOnLocation(self.currentLocation)
+            // centerMapOnLocation(self.currentLocation)
         }
         else{ //Ask for permission again if the user said no before.
             locManager.requestWhenInUseAuthorization()
@@ -318,27 +329,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         //pass
     }
     
-    override func viewWillAppear(animated: Bool) {
-        let appDelegate =
-        UIApplication.sharedApplication().delegate as! AppDelegate
-        
-        let managedContext = appDelegate.managedObjectContext
-        
-        //2
-        let fetchRequest = NSFetchRequest(entityName: "RunEntity")
-        
-        //3
-        do {
-            let results =
-            try managedContext.executeFetchRequest(fetchRequest)
-            userRuns = results as! [NSManagedObject]
-        } catch let error as NSError {
-            print("Could not fetch \(error), \(error.userInfo)")
-        }
-    }
     func drawRunOnMap(currentRun: Run, mapView: MKMapView){
-        
-        
+        //Create Overlay to draw on the MKMapView
         
         var coords = [CLLocationCoordinate2D]()
         
@@ -357,10 +349,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     func removeRunFromMap(run: Run, mapView: MKMapView){
+        //Remove overlay from map
         MapView.removeOverlay(run.overlay)
     }
     
     func updateTextLabel(label: UILabel){
+        //Update the Text Label displaying the current time and distance
         
         
         let displayDistance = Double(round(1*currentRun.distance)/1)
@@ -371,28 +365,35 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        //Location manager function that records location
         self.currentLocation = locations.last
-        if isRunning == true{
-            centerMapOnLocation(self.currentLocation)
-            if currentRun.pointsTraveled.count >= 1{
-                var coords = [CLLocationCoordinate2D]()
-                let lastLocation = currentRun.pointsTraveled.last!
-                let thisLocation = currentLocation
-                
-                coords.append(lastLocation.coordinate)
-                coords.append(thisLocation.coordinate)
-                MapView.addOverlay(MKPolyline(coordinates: &coords, count: coords.count))
-                currentRun.addLocation(currentLocation)
-                currentRun.distance += lastLocation.distanceFromLocation(thisLocation)
-                currentRun.incrementDistance(lastLocation.distanceFromLocation(thisLocation))
-                updateTextLabel(displayLabel)
+        if self.currentLocation.horizontalAccuracy < 20 {
+            if isRunning == true{
+                //Center map on the current location
+                centerMapOnLocation(self.currentLocation)
+                if currentRun.pointsTraveled.count >= 1{
+                    //If we have at least two points to draw a line between, draw that line
+                    
+                    var coords = [CLLocationCoordinate2D]()
+                    let lastLocation = currentRun.pointsTraveled.last!
+                    let thisLocation = currentLocation
+                    
+                    coords.append(lastLocation.coordinate)
+                    coords.append(thisLocation.coordinate)
+                    MapView.addOverlay(MKPolyline(coordinates: &coords, count: coords.count))
+                    currentRun.addLocation(currentLocation)
+                    currentRun.distance += lastLocation.distanceFromLocation(thisLocation)
+                    currentRun.incrementDistance(lastLocation.distanceFromLocation(thisLocation))
+                    updateTextLabel(displayLabel)
+                }
+                else{
+                    //We only took one step, wait for more.
+                    currentRun.addLocation(currentLocation)
+                }
             }
             else{
-                currentRun.addLocation(currentLocation)
+                //User is moving and we don't care
             }
-        }
-        else{
-            //User is moving and we don't care
         }
     }
     

@@ -8,6 +8,7 @@
 
 import UIKit
 import MapKit
+import CoreData
 
 
 extension LeaderBoardsViewController: MKMapViewDelegate {
@@ -24,10 +25,16 @@ class LeaderBoardsViewController: UIViewController, UITableViewDelegate, UITable
     
     @IBOutlet weak var TableView: UITableView!
     @IBOutlet weak var MapView: MKMapView!
-    var items = ["test"]
-    var names :[String] = [ "User1", "User2", "User3", "User4" ]
+    var items: [String] = []
+    var names :[String] = []
     var distances : [String] = [ "244", "323", "245", "500"]
     var time : [String] = [ "22.2", "33.3", "44.4", "55.5" ]
+    var itemsToRuns: [String : Run] = [String: Run]()
+    var fetchedItems = [NSManagedObject]()
+    
+    var tableData : [ String : [(AnyObject, AnyObject)] ] = [String:[(AnyObject, AnyObject)]]()
+    var finaltableData : [ (String, AnyObject, AnyObject) ] = []
+    
     override func viewDidLoad() {
         //names = [String]()
         //distances = [String]()
@@ -35,51 +42,50 @@ class LeaderBoardsViewController: UIViewController, UITableViewDelegate, UITable
         
         TableView.delegate = self
         TableView.dataSource = self
+        MapView.delegate = self
         TableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
         // Do any additional setup after loading the view.
+        itemsToRuns = [String: Run]()
+        fetchedItems = [NSManagedObject]()
+        itemsToRuns = [String: Run]()
         
-        let url = NSURL(string: "http://localhost:3000/runs") //change the url
         
-        //create the session object
-        var session = NSURLSession.sharedSession()
+        let httpHelper = restHTTPhelper()
         
-        //now create the NSMutableRequest object using the url object
-        let request = NSMutableURLRequest(URL: url!)
-        request.HTTPMethod = "GET" //set http method as POST
-        
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-        
-        //create dataTask using the session object to send data to the server
-        var task = session.dataTaskWithRequest(request, completionHandler: {data, response, error -> Void in
-            print("Response: \(response)")
-            var strData = NSString(data: data!, encoding: NSUTF8StringEncoding)
-            print("Body: \(strData)")
+        httpHelper.makeGetRequest("http://localhost:3000/runs"){
+            (result: NSDictionary) in
             do{
-                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions()) as? [String:AnyObject]
-                // Did the JSONObjectWithData constructor return an error? If so, log the error to the console
-                // The JSONObjectWithData constructor didn't return an error. But, we should still
-                // check and make sure that json has a value using optional binding.
-                if let parseJSON = json {
-                    // Okay, the parsedJSON is here, let's get the value for 'success' out of it
-                    var success = parseJSON["success"] as? Int
-                    print("Success: \(success)")
-                    print(parseJSON["username"] as! String)
-                    self.names.append(parseJSON["username"] as! String)
-                    self.distances.append(parseJSON["distance"]as! String)
+                let data = result["answer"]!.dataUsingEncoding(NSUTF8StringEncoding)
+                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableLeaves) as? [NSDictionary]
+                
+                for runItem in json!{
+                    
+                    let userName = runItem["username"]!
+                    let runCoordinates = runItem["coordinates"]!
+                    let distance = runItem["distance"]!
+                    
+                    
+                    if (self.tableData[String(userName)] != nil) {
+                        self.tableData[String(userName)]!.append((distance,runCoordinates))
+                    }
+                    else{
+                        self.tableData[String(userName)] = [(distance, runCoordinates)]
+                        self.names.append(String(userName))
+                    }
+                    
+                    for user in self.names{
+                        for (distance, coordinates) in self.tableData[user]! {
+                            self.finaltableData.append((user, distance, coordinates))
+                        }
+                    }
+                    self.TableView.reloadData()
+                    
                 }
-                else {
-                    // Woa, okay the json object was nil, something went worng. Maybe the server isn't running?
-                    let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
-                    print("Error could not parse JSON: \(jsonStr)")
-                }
-            }catch let err as NSError{
-                print(err.localizedDescription)
-                let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
-                print("Error could not parse JSON: '\(jsonStr)'")
+                
+            }catch{
+                print("Error retrieving Run data")
             }
-        })
-        task.resume()
+        }
         
     }
     
@@ -94,12 +100,87 @@ class LeaderBoardsViewController: UIViewController, UITableViewDelegate, UITable
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell:UITableViewCell = TableView.dequeueReusableCellWithIdentifier("cell")! as UITableViewCell
-        cell.textLabel!.text = names[indexPath.row] + " ran " + distances[indexPath.row] + " m in " + time[indexPath.row] + " s"
-        cell.textLabel!.textAlignment = .Center
+        print(indexPath.row)
+        cell.textLabel?.text = self.names[indexPath.row]
+        cell.textLabel?.textAlignment = .Center
         return cell
+    }
+    func polyline(run: Run) -> MKPolyline {
+        var coords = [CLLocationCoordinate2D]()
+        
+        for location in run.pointsTraveled {
+            coords.append(CLLocationCoordinate2D(latitude: location.coordinate.latitude,
+                longitude: location.coordinate.longitude))
+        }
+        
+        return MKPolyline(coordinates: &coords, count: run.pointsTraveled.count)
     }
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         print("You selected cell #\(indexPath.row)!")
+        
+        
+        var runsToDraw = [Run]()
+        
+        for item in self.tableData[self.names[indexPath.row]]!{
+            print("User \(self.names[indexPath.row]) ran: \(item.0) coordinates: \(item.1)\n$$$$$$$$$$$$$$$$$\n")
+            
+
+            var coordinatesTraveled = item.1 as! String
+            var distance = item.0 as! String
+            var doubleDistance = Double(distance)
+            
+            
+            coordinatesTraveled = String(coordinatesTraveled.characters.dropFirst(1))
+            coordinatesTraveled = String(coordinatesTraveled.characters.dropLast(1))
+            
+            var coordList = coordinatesTraveled.componentsSeparatedByString(", ")
+            
+            
+            
+            var coordinatePairs : [(Double, Double)] = [(Double, Double)]()
+            var prevCoordinate:Double!
+            var flag = false
+            for coordinate in coordList{
+                if prevCoordinate == nil{
+                    prevCoordinate = Double(coordinate)
+                    continue
+                }
+                else{
+                    if flag == false{
+                    coordinatePairs.append((prevCoordinate, Double(coordinate)!))
+                        flag = true
+                    }
+                    else{
+                        flag = false
+                    }
+                }
+                prevCoordinate = Double(coordinate)
+            }
+
+            var runLocations = [CLLocation]()
+            for (lattitude, longitude) in coordinatePairs{
+                var newLocation = CLLocation(latitude: lattitude, longitude: longitude)
+                print(newLocation)
+                runLocations.append(newLocation)
+            }
+            var newRun = Run(forExistingRun: doubleDistance!, seconds: 0.0, pointsTraveled: runLocations)
+            runsToDraw.append(newRun)
+        }
+        
+        
+        MapView.removeOverlays(MapView.overlays)
+        for selectedRun in runsToDraw{
+            MapView.addOverlay(polyline(selectedRun))
+            centerMapOnLocation(selectedRun.pointsTraveled.last!)
+        }
+        
+    }
+    
+    func centerMapOnLocation(location: CLLocation) {
+        //Center the MKView on a given Location
+        let coordinateRegion = MKCoordinateRegionMakeWithDistance(location.coordinate,
+            320, 320)
+        MapView.setRegion(coordinateRegion, animated: true)
     }
     
     /*

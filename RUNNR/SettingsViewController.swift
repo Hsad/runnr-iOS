@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import CoreData
 class SettingsViewController: UIViewController {
 
     @IBOutlet weak var changeUserNameButton: UIButton!
@@ -16,6 +16,9 @@ class SettingsViewController: UIViewController {
     @IBOutlet weak var autoPostRunButton: UIButton!
     @IBOutlet weak var signInButton: UIButton!
     
+    @IBOutlet weak var enterPinButton: UIButton!
+    
+    var userDefaults: NSUserDefaults = NSUserDefaults.standardUserDefaults()
     
     var flag1 = false
     var flag2 = false
@@ -34,13 +37,100 @@ class SettingsViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    @IBAction func pressedEnterPinButton(sender: AnyObject) {
+        var tField : UITextField!
+        var alert = UIAlertController(title: "Enter pin", message: "Enter your team's passcode", preferredStyle: UIAlertControllerStyle.Alert)
+
+        
+        func configurationTextField(textField: UITextField!){
+            textField.placeholder = "Enter a passcode"
+            tField = textField
+
+        }
+        func handleOkay(alertView: UIAlertAction!){
+            print("Passcode is \(tField.text)")
+            let url = NSURL(string: "http://localhost:3000/addtoteam") //change the url
+            let name = userDefaults.stringForKey("userName")!
+            let parameters = ["team": tField.text!, "username" : name]
+            
+            //create the session object
+            let session = NSURLSession.sharedSession()
+            
+            //now create the NSMutableRequest object using the url object
+            let request = NSMutableURLRequest(URL: url!)
+            request.HTTPMethod = "POST" //set http method as POST
+            
+            do{
+                request.HTTPBody =  try NSJSONSerialization.dataWithJSONObject(parameters, options: []) // pass dictionary to nsdata object and set it as request body
+                
+                request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+                request.addValue("application/json", forHTTPHeaderField: "Accept")
+                
+                //create dataTask using the session object to send data to the server
+                let task = session.dataTaskWithRequest(request, completionHandler: {data, response, error -> Void in
+                    print("Response: \(response)")
+                    //var strData = NSString(data: data!, encoding: NSUTF8StringEncoding)
+                    //print("Body: \(strData)")
+                    do{
+                        let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableLeaves) as? NSDictionary
+                        
+                        // Did the JSONObjectWithData constructor return an error? If so, log the error to the console
+                        
+                        // The JSONObjectWithData constructor didn't return an error. But, we should still
+                        // check and make sure that json has a value using optional binding.
+                        if let parseJSON = json {
+                            // Okay, the parsedJSON is here, let's get the value for 'success' out of it
+                            let success = parseJSON["success"] as? Int
+                            print("Success: \(success)")
+                        }
+                        else {
+                            // Woa, okay the json object was nil, something went worng. Maybe the server isn't running?
+                            let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
+                            print("Error could not parse JSON: \(jsonStr)")
+                        }
+                    }catch let err as NSError{
+                        print(err.localizedDescription)
+                        let jsonStr = NSString(data: data!, encoding: NSUTF8StringEncoding)
+                        print("Error could not parse JSON: '\(jsonStr)'")
+                    }
+                })
+                task.resume()
+            }catch let err as NSError{
+                print(err)
+            }
+
+        }
+        
+        func handleCancel(alertView: UIAlertAction!){
+            //Do nothing
+        }
+
+        alert.addAction(UIAlertAction(title: "Enter", style: UIAlertActionStyle.Default, handler: handleOkay))
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Default, handler: handleCancel))
+        alert.addTextFieldWithConfigurationHandler(configurationTextField)
+        self.presentViewController(alert, animated: true, completion: nil)
     
+    }
     @IBAction func staySignedInPress(sender: AnyObject) {
         
         
         if flag1 == false{
         signInButton.setImage(UIImage(named: "Checked.png"), forState: UIControlState.Normal)
             flag1 = true
+            let fetchRequest = NSFetchRequest(entityName: "RunEntity")
+            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+            let appDelegate =
+            UIApplication.sharedApplication().delegate as! AppDelegate
+            do {
+                try appDelegate.managedObjectContext.executeRequest(deleteRequest)
+                NSOperationQueue.mainQueue().addOperationWithBlock {
+                    self.userDefaults.setBool(false, forKey: "hasLoggedIn")
+                    self.performSegueWithIdentifier("settingsToLogin", sender: self)
+                }
+            } catch let error as NSError {
+                // TODO: handle the error
+                print(error)
+            }
         }
         else{
         signInButton.setImage(UIImage(named: "Unchecked.png"), forState: UIControlState.Normal)

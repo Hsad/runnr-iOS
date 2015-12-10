@@ -17,8 +17,13 @@
 		641FC96C1BD583D70067FE26 /* RUNNRUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 641FC96B1BD583D70067FE26 /* RUNNRUITests.swift */; };
 		642987751BDEC7BF00F7E48E /* Run.swift in Sources */ = {isa = PBXBuildFile; fileRef = 642987741BDEC7BF00F7E48E /* Run.swift */; };
 		642987771BDED15500F7E48E /* UserAnalyticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 642987761BDED15500F7E48E /* UserAnalyticsViewController.swift */; };
+		648AB7191C17AA7F00C14623 /* restfullHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648AB7181C17AA7F00C14623 /* restfullHelper.swift */; };
 		649F5C7F1BD58692000AA26B /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 649F5C7E1BD58692000AA26B /* MapKit.framework */; };
 		649F5C811BD5885B000AA26B /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 649F5C801BD5885B000AA26B /* CoreLocation.framework */; };
+		64B5EC521C02EDED00F57227 /* runnr.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 64B5EC511C02EDED00F57227 /* runnr.gpx */; };
+		64B5EC541C0304F300F57227 /* runnr2.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 64B5EC531C0304F300F57227 /* runnr2.gpx */; };
+		64B5EC561C0369F300F57227 /* FirstRun.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 64B5EC551C0369F300F57227 /* FirstRun.gpx */; };
+		64B5EC581C03858A00F57227 /* ThirdRun.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 64B5EC571C03858A00F57227 /* ThirdRun.gpx */; };
 		64E3A7E91BEAB5570025D043 /* Run.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 64E3A7E71BEAB5570025D043 /* Run.xcdatamodeld */; };
 		64E3A7EB1BEABDEB0025D043 /* runDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64E3A7EA1BEABDEB0025D043 /* runDataModel.swift */; };
 		64E3A7ED1BEB335E0025D043 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64E3A7EC1BEB335E0025D043 /* LoginViewController.swift */; };
@@ -62,8 +67,13 @@
 		641FC96D1BD583D70067FE26 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		642987741BDEC7BF00F7E48E /* Run.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Run.swift; sourceTree = "<group>"; };
 		642987761BDED15500F7E48E /* UserAnalyticsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserAnalyticsViewController.swift; sourceTree = "<group>"; };
+		648AB7181C17AA7F00C14623 /* restfullHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = restfullHelper.swift; sourceTree = "<group>"; };
 		649F5C7E1BD58692000AA26B /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		649F5C801BD5885B000AA26B /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		64B5EC511C02EDED00F57227 /* runnr.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = runnr.gpx; sourceTree = "<group>"; };
+		64B5EC531C0304F300F57227 /* runnr2.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = runnr2.gpx; sourceTree = "<group>"; };
+		64B5EC551C0369F300F57227 /* FirstRun.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = FirstRun.gpx; sourceTree = "<group>"; };
+		64B5EC571C03858A00F57227 /* ThirdRun.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ThirdRun.gpx; sourceTree = "<group>"; };
 		64E3A7E81BEAB5570025D043 /* Run.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Run.xcdatamodel; sourceTree = "<group>"; };
 		64E3A7EA1BEABDEB0025D043 /* runDataModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = runDataModel.swift; sourceTree = "<group>"; };
 		64E3A7EC1BEB335E0025D043 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -103,6 +113,10 @@
 		641FC93F1BD583D70067FE26 = {
 			isa = PBXGroup;
 			children = (
+				64B5EC571C03858A00F57227 /* ThirdRun.gpx */,
+				64B5EC551C0369F300F57227 /* FirstRun.gpx */,
+				64B5EC531C0304F300F57227 /* runnr2.gpx */,
+				64B5EC511C02EDED00F57227 /* runnr.gpx */,
 				64E3A7E71BEAB5570025D043 /* Run.xcdatamodeld */,
 				64E3A7EA1BEABDEB0025D043 /* runDataModel.swift */,
 				642987741BDEC7BF00F7E48E /* Run.swift */,
@@ -138,6 +152,7 @@
 				64E3A7F41BEB33990025D043 /* TeamViewController.swift */,
 				64E3A7EC1BEB335E0025D043 /* LoginViewController.swift */,
 				642987761BDED15500F7E48E /* UserAnalyticsViewController.swift */,
+				648AB7181C17AA7F00C14623 /* restfullHelper.swift */,
 				641FC9521BD583D70067FE26 /* Assets.xcassets */,
 				641FC9541BD583D70067FE26 /* LaunchScreen.storyboard */,
 				641FC9571BD583D70067FE26 /* Info.plist */,
@@ -268,7 +283,11 @@
 			files = (
 				641FC9561BD583D70067FE26 /* LaunchScreen.storyboard in Resources */,
 				641FC9531BD583D70067FE26 /* Assets.xcassets in Resources */,
+				64B5EC561C0369F300F57227 /* FirstRun.gpx in Resources */,
+				64B5EC541C0304F300F57227 /* runnr2.gpx in Resources */,
 				641FC9511BD583D70067FE26 /* Main.storyboard in Resources */,
+				64B5EC521C02EDED00F57227 /* runnr.gpx in Resources */,
+				64B5EC581C03858A00F57227 /* ThirdRun.gpx in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -305,6 +324,7 @@
 				64E3A7EB1BEABDEB0025D043 /* runDataModel.swift in Sources */,
 				641FC94C1BD583D70067FE26 /* AppDelegate.swift in Sources */,
 				64E3A7E91BEAB5570025D043 /* Run.xcdatamodeld in Sources */,
+				648AB7191C17AA7F00C14623 /* restfullHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

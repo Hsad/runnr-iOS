@@ -27,10 +27,10 @@ class RegisterViewController: UIViewController {
     
 
     @IBAction func submitButtonPressed(sender: AnyObject) {
+        //Submit register request to server
         userDefaults.setObject(userNameField.text, forKey: "userName")
         let url = NSURL(string: "http://localhost:3000/users") //change the url
-        var parameters = ["username": userNameField.text!, "score": "1", "email": password1Field!.text!]
-        
+        var parameters = ["username": userNameField.text!, "userscore": "1", "useremail": password1Field!.text!, "team": "None", "password": password2Field!.text!]
         //create the session object
         var session = NSURLSession.sharedSession()
         

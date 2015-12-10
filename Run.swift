@@ -32,7 +32,6 @@ class Run : NSObject {
             userInfo: nil,
             repeats: true)
     }
-    
     convenience init(forExistingRun distance: Double, seconds: Double, pointsTraveled: [CLLocation]){
         self.init()
         self.kill()
@@ -67,6 +66,7 @@ class Run : NSObject {
         let paceQuantity = HKQuantity(unit: paceUnit, doubleValue: seconds / distance)
         currentPace = paceQuantity
     }
+    
     func getCoordinatesOfRoute()->[CLLocation]{
         //Return the coordinates of this Run.
         return self.pointsTraveled

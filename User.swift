@@ -11,20 +11,18 @@ import Foundation
 
 class User: NSObject{
     var userName : String!
-    var userDisplayName : String!
     var runs : [Run]!
     
     override init(){
         super.init()
         userName = ""
-        userDisplayName = ""
         runs = [Run]()
     }
     func giveUserName(nameToSet: String!){
         userName = nameToSet
     }
-    func giveUserDisplayName(displayNameToSet: String!){
-        userDisplayName = displayNameToSet
+    func getUserName()->String{
+        return userName
     }
     func appendRun(runToAppend: Run!){
         runs.append(runToAppend)

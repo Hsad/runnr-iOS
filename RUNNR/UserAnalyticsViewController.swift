@@ -20,6 +20,7 @@ extension UserAnalyticsViewController: MKMapViewDelegate {
     }
     
 }
+
 class UserAnalyticsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource{
     
     @IBOutlet weak var MapView: MKMapView!
@@ -28,7 +29,6 @@ class UserAnalyticsViewController: UIViewController, UITableViewDelegate, UITabl
     var itemsToRuns: [String : Run] = [String: Run]()
     var fetchedItems = [NSManagedObject]()
     var secondFetchedItems = [NSManagedObject]()
-    var overlay : MKOverlay!
     
     
     override func viewDidLoad() {
@@ -66,35 +66,22 @@ class UserAnalyticsViewController: UIViewController, UITableViewDelegate, UITabl
                 var xCoords = [Double]()
                 var yCoords = [Double]()
                 
+                var locationCoords = [CLLocation]()
                 for coordinate in owns{
                     do{
                         var newCoordinate = coordinate as! CoordinateEntity
-                        xCoords.append(newCoordinate.latitude)
-                        yCoords.append(newCoordinate.longitude)
+                        let location = CLLocation(latitude: newCoordinate.latitude, longitude:  newCoordinate.longitude)
+                        locationCoords.append(location)
                         
                     }
                 }
                 
+                let newRun = Run(forExistingRun: distance, seconds: time, pointsTraveled: locationCoords)
                 
-                var locationCoords = [CLLocation]()
-                if xCoords.count == yCoords.count {
-                    for lat in xCoords {
-                        for lon in yCoords{
-                            let location = CLLocation(latitude: lat, longitude: lon)
-                            print("\(lat) \(location.coordinate.latitude), \(lon) \(location.coordinate.longitude)")
-                            locationCoords.append(location)
-                        }
-                    }
-                }
-                
-                
-                var newRun = Run(forExistingRun: distance, seconds: time, pointsTraveled: locationCoords)
-                
-                print(createAt)
                 items.append(createAt)
                 itemsToRuns[createAt] = newRun
                 
-                
+                self.TableView.reloadData()
                 
                 
                 
@@ -114,52 +101,52 @@ class UserAnalyticsViewController: UIViewController, UITableViewDelegate, UITabl
         // Dispose of any resources that can be recreated.
     }
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.items.count;
+        return self.itemsToRuns.count;
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell:UITableViewCell = TableView.dequeueReusableCellWithIdentifier("cell")! as UITableViewCell
         
-        
-        var id_string = items[indexPath.row]
-        var currentRun = itemsToRuns[id_string]
+        let id_string = items[indexPath.row]
+        let currentRun = itemsToRuns[id_string]
         cell.textLabel?.text = id_string + " " + String(round(currentRun!.distance*10)/10)
         cell.textLabel?.text = (cell.textLabel?.text)! + " ft " + String(currentRun!.seconds) + " s "
         cell.textLabel?.textAlignment = .Center
         
         return cell
     }
+    func polyline(run: Run) -> MKPolyline {
+        var coords = [CLLocationCoordinate2D]()
+        
+        for location in run.pointsTraveled {
+            coords.append(CLLocationCoordinate2D(latitude: location.coordinate.latitude,
+                longitude: location.coordinate.longitude))
+        }
+        
+        return MKPolyline(coordinates: &coords, count: run.pointsTraveled.count)
+    }
     
     func centerMapOnLocation(location: CLLocation) {
         //Center the MKView on a given Location
         let coordinateRegion = MKCoordinateRegionMakeWithDistance(location.coordinate,
-            80.0, 80.0)
+            320, 320)
         MapView.setRegion(coordinateRegion, animated: true)
     }
-    func drawRunOnMap(currentRun: Run, mapView: MKMapView){
-        var coords = [CLLocationCoordinate2D]()
-        for point in currentRun.pointsTraveled{
-            coords.append(point.coordinate)
-        }
-        MapView.addOverlay(MKPolyline(coordinates: &coords, count: coords.count))
-            }
+
+    
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        print("You selected cell #\(indexPath.row)!")
-        if overlay != nil{
+        for overlay in MapView.overlays{
             MapView.removeOverlay(overlay)
         }
-        var lookUpString = items[indexPath.row]
-        var selectedRun = itemsToRuns[lookUpString]
-        
-        print(selectedRun!.pointsTraveled)
-        
+        print("You selected cell #\(indexPath.row)!")
+        let lookUpString = items[indexPath.row]
+        let selectedRun = itemsToRuns[lookUpString]
+        centerMapOnLocation(selectedRun!.pointsTraveled.last!)
+        MapView.addOverlay(polyline(selectedRun!))
+
         let formatter = NSDateFormatter()
         formatter.dateStyle = NSDateFormatterStyle.ShortStyle
         formatter.timeStyle = .ShortStyle
-        
-        
-        centerMapOnLocation(selectedRun!.pointsTraveled.last!)
-        drawRunOnMap(selectedRun!, mapView: self.MapView)
     }
     
     /*
